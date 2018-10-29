@@ -13,7 +13,7 @@ import javax.persistence.PreUpdate;
 import javax.persistence.Table;
 
 @Entity
-@Table(name = "tab_prato")
+@Table(name = "tb_prato")
 public class PratoEntity implements Serializable {
 	private static final long serialVersionUID = -3549635549813419660L;
 
@@ -25,7 +25,7 @@ public class PratoEntity implements Serializable {
 	private Date dataAtualizacao;
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	public Long getId() {
 		return id;
 	}
