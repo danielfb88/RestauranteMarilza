@@ -19,6 +19,13 @@ public class PratoServiceImpl implements PratoService {
 	private PratoRepository pratoRepository;
 
 	@Override
+	public Optional<PratoEntity> buscarPorId(Long id) {
+		log.info("Buscando um prato para a ID {}", id);
+
+		return Optional.ofNullable(pratoRepository.findById(id));
+	}
+
+	@Override
 	public Optional<PratoEntity> buscarPorDescricao(String descricao) {
 		log.info("Buscando um prato para a descrição {}", descricao);
 

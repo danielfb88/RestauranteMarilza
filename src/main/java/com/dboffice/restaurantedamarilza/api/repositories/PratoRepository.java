@@ -6,7 +6,10 @@ import org.springframework.transaction.annotation.Transactional;
 import com.dboffice.restaurantedamarilza.api.entities.PratoEntity;
 
 public interface PratoRepository extends JpaRepository<PratoEntity, Long> {
-	
+
+	@Transactional(readOnly = true)
+	PratoEntity findById(Long id);
+
 	@Transactional(readOnly = true)
 	PratoEntity findByDescricao(String descricao);
 }

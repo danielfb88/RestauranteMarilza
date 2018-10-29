@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -85,6 +86,52 @@ public class PratoController {
 	}
 
 	/**
+	 * Atualiza os dados de um funcionário.
+	 * 
+	 * @param id
+	 * @param pratoDTO
+	 * @param result
+	 * @return ResponseEntity<Response<PratoDTO>>
+	 * @throws NoSuchAlgorithmException
+	 */
+	@PutMapping(value = "/{id}")
+	public ResponseEntity<Response<PratoDTO>> atualizar(@PathVariable("id") Long id, @Valid @RequestBody PratoDTO pratoDTO, BindingResult result) throws NoSuchAlgorithmException {
+		log.info("Atualizando prato: {}", pratoDTO.toString());
+		Response<PratoDTO> response = new Response<PratoDTO>();
+
+		Optional<PratoEntity> optPratoEntity = this.pratoService.buscarPorId(id);
+		if (!optPratoEntity.isPresent()) {
+			result.addError(new ObjectError("prato", "Prato não encontrado."));
+		}
+
+		PratoEntity pratoEntity = optPratoEntity.get();
+
+		// Verificando se já existe outro com a mesma descrição
+		if (!pratoEntity.getDescricao().equals(pratoDTO.getDescricao())) {
+			this.pratoService.buscarPorDescricao(pratoDTO.getDescricao()).ifPresent(func -> result.addError(new ObjectError("descricao", "Descrição já existente.")));
+
+			pratoEntity.setDescricao(pratoDTO.getDescricao());
+		}
+
+		pratoEntity.setReceita(null);
+		pratoDTO.getReceita().ifPresent(receita -> pratoEntity.setReceita(receita));
+
+		pratoEntity.setObservacao(null);
+		pratoDTO.getObservacao().ifPresent(observacao -> pratoEntity.setObservacao(observacao));
+
+		if (result.hasErrors()) {
+			log.error("Erro validando prato: {}", result.getAllErrors());
+			result.getAllErrors().forEach(error -> response.getErrors().add(error.getDefaultMessage()));
+			return ResponseEntity.badRequest().body(response);
+		}
+
+		this.pratoService.salvar(pratoEntity);
+		response.setData(this.converterParaDTO(pratoEntity));
+
+		return ResponseEntity.ok(response);
+	}
+
+	/**
 	 * Verifica se o prato está cadastrada
 	 * 
 	 * @param pratoDTO
@@ -104,8 +151,8 @@ public class PratoController {
 		PratoDTO pratoDTO = new PratoDTO();
 		pratoDTO.setId(pratoEntity.getId());
 		pratoDTO.setDescricao(pratoEntity.getDescricao());
-		pratoDTO.setReceita(pratoEntity.getReceita());
-		pratoDTO.setObservacao(pratoEntity.getObservacao());
+		pratoDTO.setReceita(pratoEntity.getReceitaOpt());
+		pratoDTO.setObservacao(pratoEntity.getObservacaoOpt());
 
 		return pratoDTO;
 	}
@@ -122,8 +169,8 @@ public class PratoController {
 		PratoEntity pratoEntity = new PratoEntity();
 		pratoEntity.setId(pratoDTO.getId());
 		pratoEntity.setDescricao(pratoDTO.getDescricao());
-		pratoEntity.setReceita(pratoDTO.getReceita());
-		pratoEntity.setObservacao(pratoDTO.getObservacao());
+		pratoEntity.setReceita(pratoDTO.getReceita().get());
+		pratoEntity.setObservacao(pratoDTO.getObservacao().get());
 
 		return pratoEntity;
 	}

@@ -6,6 +6,14 @@ import com.dboffice.restaurantedamarilza.api.entities.PratoEntity;
 
 public interface PratoService {
 	/**
+	 * Buscar por id
+	 * 
+	 * @param id
+	 * @return
+	 */
+	Optional<PratoEntity> buscarPorId(Long id);
+
+	/**
 	 * Buscar Por descricao
 	 * 
 	 * @param descricao

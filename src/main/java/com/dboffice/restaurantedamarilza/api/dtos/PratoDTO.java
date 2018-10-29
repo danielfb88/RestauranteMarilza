@@ -1,21 +1,15 @@
 package com.dboffice.restaurantedamarilza.api.dtos;
 
+import java.util.Optional;
+
 public class PratoDTO {
 	private Long id;
 	private String descricao;
-	private String receita;
-	private String observacao;
+	private Optional<String> receita = Optional.empty();
+	private Optional<String> observacao = Optional.empty();
 
 	public PratoDTO() {
 		super();
-	}
-
-	public PratoDTO(Long id, String descricao, String receita, String observacao) {
-		super();
-		this.id = id;
-		this.descricao = descricao;
-		this.receita = receita;
-		this.observacao = observacao;
 	}
 
 	public Long getId() {
@@ -34,19 +28,19 @@ public class PratoDTO {
 		this.descricao = descricao;
 	}
 
-	public String getReceita() {
+	public Optional<String> getReceita() {
 		return receita;
 	}
 
-	public void setReceita(String receita) {
+	public void setReceita(Optional<String> receita) {
 		this.receita = receita;
 	}
 
-	public String getObservacao() {
+	public Optional<String> getObservacao() {
 		return observacao;
 	}
 
-	public void setObservacao(String observacao) {
+	public void setObservacao(Optional<String> observacao) {
 		this.observacao = observacao;
 	}
 

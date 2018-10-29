@@ -2,6 +2,7 @@ package com.dboffice.restaurantedamarilza.api.entities;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.Optional;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -11,6 +12,7 @@ import javax.persistence.Id;
 import javax.persistence.PrePersist;
 import javax.persistence.PreUpdate;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 @Entity
 @Table(name = "tb_prato")
@@ -47,6 +49,11 @@ public class PratoEntity implements Serializable {
 	public String getReceita() {
 		return receita;
 	}
+	
+	@Transient
+	public Optional<String> getReceitaOpt() {
+		return Optional.ofNullable(receita);
+	}
 
 	public void setReceita(String receita) {
 		this.receita = receita;
@@ -55,6 +62,11 @@ public class PratoEntity implements Serializable {
 	@Column(name = "observacao", nullable = true)
 	public String getObservacao() {
 		return observacao;
+	}
+	
+	@Transient
+	public Optional<String> getObservacaoOpt() {
+		return Optional.ofNullable(observacao);
 	}
 
 	public void setObservacao(String observacao) {
