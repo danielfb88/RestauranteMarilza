@@ -8,5 +8,5 @@ import com.dboffice.restaurantedamarilza.api.entities.PratoEntity;
 public interface PratoRepository extends JpaRepository<PratoEntity, Long> {
 	
 	@Transactional(readOnly = true)
-	PratoRepository findByDescricao(String descricao);
+	PratoEntity findByDescricao(String descricao);
 }
