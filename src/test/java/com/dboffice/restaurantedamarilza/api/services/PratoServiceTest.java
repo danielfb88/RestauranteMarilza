@@ -30,17 +30,23 @@ public class PratoServiceTest {
 	@Autowired
 	private PratoService pratoService;
 
-	private static final String DESCRICAO = "Feijoada";
-
 	@Before
 	public void setUp() throws Exception {
+		BDDMockito.given(this.pratoRepository.findOne(Mockito.anyLong())).willReturn(new PratoEntity());
 		BDDMockito.given(this.pratoRepository.findByDescricao(Mockito.anyString())).willReturn(new PratoEntity());
 		BDDMockito.given(this.pratoRepository.save(Mockito.any(PratoEntity.class))).willReturn(new PratoEntity());
 	}
+	
+	@Test
+	public void testBuscarPorId() {
+		Optional<PratoEntity> pratoEntity = this.pratoService.buscarPorId(new Long(1));
+
+		assertTrue(pratoEntity.isPresent());
+	}
 
 	@Test
-	public void testBuscarEmpresaPorCnpj() {
-		Optional<PratoEntity> pratoEntity = this.pratoService.buscarPorDescricao(DESCRICAO);
+	public void testBuscarPorDescricao() {
+		Optional<PratoEntity> pratoEntity = this.pratoService.buscarPorDescricao("Feijoada");
 
 		assertTrue(pratoEntity.isPresent());
 	}
