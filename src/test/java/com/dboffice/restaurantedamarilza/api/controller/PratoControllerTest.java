@@ -83,7 +83,7 @@ public class PratoControllerTest {
 		return mapper.writeValueAsString(pratoDTO);
 	}
 	
-	class PratoDTO {
+	private class PratoDTO {
 		private Long id;
 		private String descricao;
 		private String receita;
