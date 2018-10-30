@@ -81,9 +81,8 @@ public class PratoController {
 
 		List<PratoEntity> listPratoEntity = this.pratoService.findAll();
 		List<PratoDTO> listPratoDTO = new ArrayList<PratoDTO>();
-		for (PratoEntity pratoEntity : listPratoEntity) {
-			listPratoDTO.add(this.parseDTO(pratoEntity));
-		}
+		
+		listPratoEntity.forEach(pratoEntity -> listPratoDTO.add(this.parseDTO(pratoEntity)));
 
 		response.setData(listPratoDTO);
 		return ResponseEntity.ok(response);
