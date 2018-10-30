@@ -147,7 +147,8 @@ public class PratoController {
 		log.info("Cadastrando PF: {}", pratoDTO.toString());
 		Response<PratoDTO> response = new Response<PratoDTO>();
 
-		validarDadosExistentes(pratoDTO, result);
+		this.pratoService.findByDescricao(pratoDTO.getDescricao())
+			.ifPresent(func -> result.addError(new ObjectError("prato", "Descrição já existente.")));
 
 		if (result.hasErrors()) {
 			log.error("Erro validando dados do prato: {}", result.getAllErrors());
@@ -229,16 +230,6 @@ public class PratoController {
 
 		this.pratoService.delete(id);
 		return ResponseEntity.ok(new Response<String>());
-	}
-
-	/**
-	 * Verifica se o prato está cadastrada
-	 * 
-	 * @param pratoDTO
-	 * @param result
-	 */
-	private void validarDadosExistentes(PratoDTO pratoDTO, BindingResult result) {
-		this.pratoService.findByDescricao(pratoDTO.getDescricao()).ifPresent(func -> result.addError(new ObjectError("prato", "Descrição já existente.")));
 	}
 
 	/**
