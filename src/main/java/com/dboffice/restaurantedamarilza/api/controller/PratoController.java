@@ -156,7 +156,16 @@ public class PratoController {
 			return ResponseEntity.badRequest().body(response);
 		}
 
-		PratoEntity pratoEntity = parseEntity(pratoDTO);
+		PratoEntity pratoEntity = new PratoEntity();
+		pratoEntity.setId(pratoDTO.getId());
+		pratoEntity.setDescricao(pratoDTO.getDescricao());
+		
+		pratoEntity.setReceita(null);
+		pratoDTO.getReceita().ifPresent(receita -> pratoEntity.setReceita(receita));
+
+		pratoEntity.setObservacao(null);
+		pratoDTO.getObservacao().ifPresent(observacao -> pratoEntity.setObservacao(observacao));
+		
 		this.pratoService.save(pratoEntity);
 
 		response.setData(this.parseDTO(pratoEntity));
@@ -246,24 +255,6 @@ public class PratoController {
 		pratoDTO.setObservacao(pratoEntity.getObservacaoOpt());
 
 		return pratoDTO;
-	}
-
-	/**
-	 * Converte os dados do DTO para Entity.
-	 * 
-	 * @param pratoDTO
-	 * @param result
-	 * @return Funcionario
-	 * @throws NoSuchAlgorithmException
-	 */
-	private PratoEntity parseEntity(PratoDTO pratoDTO) throws NoSuchAlgorithmException {
-		PratoEntity pratoEntity = new PratoEntity();
-		pratoEntity.setId(pratoDTO.getId());
-		pratoEntity.setDescricao(pratoDTO.getDescricao());
-		pratoEntity.setReceita(pratoDTO.getReceita().get());
-		pratoEntity.setObservacao(pratoDTO.getObservacao().get());
-
-		return pratoEntity;
 	}
 
 }

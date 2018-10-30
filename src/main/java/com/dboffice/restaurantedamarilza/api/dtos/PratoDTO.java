@@ -2,6 +2,9 @@ package com.dboffice.restaurantedamarilza.api.dtos;
 
 import java.util.Optional;
 
+import org.hibernate.validator.constraints.Length;
+import org.hibernate.validator.constraints.NotEmpty;
+
 public class PratoDTO {
 	private Long id;
 	private String descricao;
@@ -20,6 +23,8 @@ public class PratoDTO {
 		this.id = id;
 	}
 
+	@NotEmpty(message = "Descrição não pode ser vazio.")
+	@Length(min = 3, max = 30, message = "Descrião deve conter entre 3 e 30 caracteres.")
 	public String getDescricao() {
 		return descricao;
 	}
