@@ -55,7 +55,29 @@ public class PratoController {
 			return ResponseEntity.badRequest().body(response);
 		}
 
-		response.setData(this.converterParaDTO(pratoEntity.get()));
+		response.setData(this.parseDTO(pratoEntity.get()));
+		return ResponseEntity.ok(response);
+	}
+	
+	/**
+	 * Retorna uma prato por id.
+	 * 
+	 * @param prato
+	 * @return ResponseEntity<Response<PratoDto>>
+	 */
+	@GetMapping(value = "/{id}")
+	public ResponseEntity<Response<PratoDTO>> buscarPorId(@PathVariable("id") Long id) {
+		log.info("Buscando prato por id: {}", id);
+		Response<PratoDTO> response = new Response<PratoDTO>();
+		Optional<PratoEntity> pratoEntity = pratoService.buscarPorId(id);
+
+		if (!pratoEntity.isPresent()) {
+			log.info("Prato não encontrado para o id: {}", id);
+			response.getErrors().add("Prato não encontrado para o id '" + id + "'");
+			return ResponseEntity.badRequest().body(response);
+		}
+
+		response.setData(this.parseDTO(pratoEntity.get()));
 		return ResponseEntity.ok(response);
 	}
 
@@ -80,10 +102,10 @@ public class PratoController {
 			return ResponseEntity.badRequest().body(response);
 		}
 
-		PratoEntity pratoEntity = converterParaEntity(pratoDTO);
+		PratoEntity pratoEntity = parseEntity(pratoDTO);
 		this.pratoService.salvar(pratoEntity);
 
-		response.setData(this.converterParaDTO(pratoEntity));
+		response.setData(this.parseDTO(pratoEntity));
 		return ResponseEntity.ok(response);
 	}
 
@@ -128,7 +150,7 @@ public class PratoController {
 		}
 
 		this.pratoService.salvar(pratoEntity);
-		response.setData(this.converterParaDTO(pratoEntity));
+		response.setData(this.parseDTO(pratoEntity));
 
 		return ResponseEntity.ok(response);
 	}
@@ -172,7 +194,7 @@ public class PratoController {
 	 * @param pratoEntity
 	 * @return PratoDTO
 	 */
-	private PratoDTO converterParaDTO(PratoEntity pratoEntity) {
+	private PratoDTO parseDTO(PratoEntity pratoEntity) {
 		PratoDTO pratoDTO = new PratoDTO();
 		pratoDTO.setId(pratoEntity.getId());
 		pratoDTO.setDescricao(pratoEntity.getDescricao());
@@ -190,7 +212,7 @@ public class PratoController {
 	 * @return Funcionario
 	 * @throws NoSuchAlgorithmException
 	 */
-	private PratoEntity converterParaEntity(PratoDTO pratoDTO) throws NoSuchAlgorithmException {
+	private PratoEntity parseEntity(PratoDTO pratoDTO) throws NoSuchAlgorithmException {
 		PratoEntity pratoEntity = new PratoEntity();
 		pratoEntity.setId(pratoDTO.getId());
 		pratoEntity.setDescricao(pratoDTO.getDescricao());
