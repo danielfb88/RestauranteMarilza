@@ -10,6 +10,10 @@ import javax.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort.Direction;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.BindingResult;
@@ -22,6 +26,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.dboffice.restaurantedamarilza.api.dtos.PratoDTO;
@@ -35,6 +40,9 @@ import com.dboffice.restaurantedamarilza.api.services.PratoService;
 public class PratoController {
 
 	private static final Logger log = LoggerFactory.getLogger(PratoController.class);
+	
+	@Value("${paginacao.qtd_por_pagina}")
+	private int qtdPorPagina;
 
 	@Autowired
 	private PratoService pratoService;
@@ -78,6 +86,29 @@ public class PratoController {
 		}
 
 		response.setData(listPratoDTO);
+		return ResponseEntity.ok(response);
+	}
+	
+	/**
+	 * Retorna todos paginados
+	 * @param pag
+	 * @param ord
+	 * @param dir
+	 * @return
+	 */
+	@GetMapping(value = "/pag")
+	public ResponseEntity<Response<Page<PratoDTO>>> findAll(
+			@RequestParam(value = "pag", defaultValue = "0") int pag,
+			@RequestParam(value = "ord", defaultValue = "id") String ord,
+			@RequestParam(value = "dir", defaultValue = "DESC") String dir) {
+		log.info("Buscando todos os pratos. página: {}", pag);
+		Response<Page<PratoDTO>> response = new Response<Page<PratoDTO>>();
+
+		PageRequest pageRequest = new PageRequest(pag, this.qtdPorPagina, Direction.valueOf(dir), ord);
+		Page<PratoEntity> pagePratoEntity = this.pratoService.findAll(pageRequest);
+		Page<PratoDTO> pagePratoDTO = pagePratoEntity.map(pratoEntity -> this.parseDTO(pratoEntity));
+
+		response.setData(pagePratoDTO);
 		return ResponseEntity.ok(response);
 	}
 
