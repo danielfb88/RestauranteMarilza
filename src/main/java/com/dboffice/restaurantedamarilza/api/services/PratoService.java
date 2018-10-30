@@ -1,6 +1,10 @@
 package com.dboffice.restaurantedamarilza.api.services;
 
+import java.util.List;
 import java.util.Optional;
+
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import com.dboffice.restaurantedamarilza.api.entities.PratoEntity;
 
@@ -11,7 +15,7 @@ public interface PratoService {
 	 * @param id
 	 * @return
 	 */
-	Optional<PratoEntity> buscarPorId(Long id);
+	Optional<PratoEntity> findById(Long id);
 
 	/**
 	 * Buscar Por descricao
@@ -19,7 +23,22 @@ public interface PratoService {
 	 * @param descricao
 	 * @return
 	 */
-	Optional<PratoEntity> buscarPorDescricao(String descricao);
+	Optional<PratoEntity> findByDescricao(String descricao);
+
+	/**
+	 * Busca todos
+	 * 
+	 * @return
+	 */
+	List<PratoEntity> findAll();
+
+	/**
+	 * Busca todos
+	 * 
+	 * @param pageable
+	 * @return
+	 */
+	Page<PratoEntity> findAll(Pageable pageable);
 
 	/**
 	 * Salvar prato
@@ -27,12 +46,12 @@ public interface PratoService {
 	 * @param pratoEntity
 	 * @return
 	 */
-	PratoEntity salvar(PratoEntity pratoEntity);
+	PratoEntity save(PratoEntity pratoEntity);
 
 	/**
 	 * Remove um prato da base de dados.
 	 * 
 	 * @param id
 	 */
-	void remover(Long id);
+	void delete(Long id);
 }

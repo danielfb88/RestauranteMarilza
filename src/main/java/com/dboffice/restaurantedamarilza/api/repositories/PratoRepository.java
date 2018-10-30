@@ -9,4 +9,5 @@ public interface PratoRepository extends JpaRepository<PratoEntity, Long> {
 
 	@Transactional(readOnly = true)
 	PratoEntity findByDescricao(String descricao);
+
 }

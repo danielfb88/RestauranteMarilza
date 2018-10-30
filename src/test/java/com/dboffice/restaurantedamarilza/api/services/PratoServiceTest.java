@@ -39,21 +39,21 @@ public class PratoServiceTest {
 	
 	@Test
 	public void testBuscarPorId() {
-		Optional<PratoEntity> pratoEntity = this.pratoService.buscarPorId(new Long(1));
+		Optional<PratoEntity> pratoEntity = this.pratoService.findById(new Long(1));
 
 		assertTrue(pratoEntity.isPresent());
 	}
 
 	@Test
 	public void testBuscarPorDescricao() {
-		Optional<PratoEntity> pratoEntity = this.pratoService.buscarPorDescricao("Feijoada");
+		Optional<PratoEntity> pratoEntity = this.pratoService.findByDescricao("Feijoada");
 
 		assertTrue(pratoEntity.isPresent());
 	}
 
 	@Test
 	public void testPersistirEmpresa() {
-		PratoEntity pratoEntity = this.pratoService.salvar(new PratoEntity());
+		PratoEntity pratoEntity = this.pratoService.save(new PratoEntity());
 
 		assertNotNull(pratoEntity);
 	}

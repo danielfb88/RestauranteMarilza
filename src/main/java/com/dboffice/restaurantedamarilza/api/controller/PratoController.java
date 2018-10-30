@@ -1,6 +1,8 @@
 package com.dboffice.restaurantedamarilza.api.controller;
 
 import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 import javax.validation.Valid;
@@ -47,7 +49,7 @@ public class PratoController {
 	public ResponseEntity<Response<PratoDTO>> buscarPorDescricao(@PathVariable("descricao") String descricao) {
 		log.info("Buscando prato por descrição: {}", descricao);
 		Response<PratoDTO> response = new Response<PratoDTO>();
-		Optional<PratoEntity> pratoEntity = pratoService.buscarPorDescricao(descricao);
+		Optional<PratoEntity> pratoEntity = pratoService.findByDescricao(descricao);
 
 		if (!pratoEntity.isPresent()) {
 			log.info("Prato não encontrado para a descriçạo: {}", descricao);
@@ -58,7 +60,27 @@ public class PratoController {
 		response.setData(this.parseDTO(pratoEntity.get()));
 		return ResponseEntity.ok(response);
 	}
-	
+
+	/**
+	 * Retorna todos
+	 * 
+	 * @return
+	 */
+	@GetMapping
+	public ResponseEntity<Response<List<PratoDTO>>> findAll() {
+		log.info("Buscando todos os pratos");
+		Response<List<PratoDTO>> response = new Response<List<PratoDTO>>();
+
+		List<PratoEntity> listPratoEntity = this.pratoService.findAll();
+		List<PratoDTO> listPratoDTO = new ArrayList<PratoDTO>();
+		for (PratoEntity pratoEntity : listPratoEntity) {
+			listPratoDTO.add(this.parseDTO(pratoEntity));
+		}
+
+		response.setData(listPratoDTO);
+		return ResponseEntity.ok(response);
+	}
+
 	/**
 	 * Retorna uma prato por id.
 	 * 
@@ -69,7 +91,7 @@ public class PratoController {
 	public ResponseEntity<Response<PratoDTO>> buscarPorId(@PathVariable("id") Long id) {
 		log.info("Buscando prato por id: {}", id);
 		Response<PratoDTO> response = new Response<PratoDTO>();
-		Optional<PratoEntity> pratoEntity = pratoService.buscarPorId(id);
+		Optional<PratoEntity> pratoEntity = pratoService.findById(id);
 
 		if (!pratoEntity.isPresent()) {
 			log.info("Prato não encontrado para o id: {}", id);
@@ -103,7 +125,7 @@ public class PratoController {
 		}
 
 		PratoEntity pratoEntity = parseEntity(pratoDTO);
-		this.pratoService.salvar(pratoEntity);
+		this.pratoService.save(pratoEntity);
 
 		response.setData(this.parseDTO(pratoEntity));
 		return ResponseEntity.ok(response);
@@ -123,7 +145,7 @@ public class PratoController {
 		log.info("Atualizando prato: {}", pratoDTO.toString());
 		Response<PratoDTO> response = new Response<PratoDTO>();
 
-		Optional<PratoEntity> optPratoEntity = this.pratoService.buscarPorId(id);
+		Optional<PratoEntity> optPratoEntity = this.pratoService.findById(id);
 		if (!optPratoEntity.isPresent()) {
 			result.addError(new ObjectError("prato", "Prato não encontrado."));
 		}
@@ -132,7 +154,7 @@ public class PratoController {
 
 		// Verificando se já existe outro com a mesma descrição
 		if (!pratoEntity.getDescricao().equals(pratoDTO.getDescricao())) {
-			this.pratoService.buscarPorDescricao(pratoDTO.getDescricao()).ifPresent(func -> result.addError(new ObjectError("descricao", "Descrição já existente.")));
+			this.pratoService.findByDescricao(pratoDTO.getDescricao()).ifPresent(func -> result.addError(new ObjectError("descricao", "Descrição já existente.")));
 
 			pratoEntity.setDescricao(pratoDTO.getDescricao());
 		}
@@ -149,7 +171,7 @@ public class PratoController {
 			return ResponseEntity.badRequest().body(response);
 		}
 
-		this.pratoService.salvar(pratoEntity);
+		this.pratoService.save(pratoEntity);
 		response.setData(this.parseDTO(pratoEntity));
 
 		return ResponseEntity.ok(response);
@@ -166,7 +188,7 @@ public class PratoController {
 	public ResponseEntity<Response<String>> remover(@PathVariable("id") Long id) {
 		log.info("Removendo um prato: {}", id);
 		Response<String> response = new Response<String>();
-		Optional<PratoEntity> pratoEntity = this.pratoService.buscarPorId(id);
+		Optional<PratoEntity> pratoEntity = this.pratoService.findById(id);
 
 		if (!pratoEntity.isPresent()) {
 			log.info("Erro ao remover devido ao prato ID: {} ser inválido.", id);
@@ -174,7 +196,7 @@ public class PratoController {
 			return ResponseEntity.badRequest().body(response);
 		}
 
-		this.pratoService.remover(id);
+		this.pratoService.delete(id);
 		return ResponseEntity.ok(new Response<String>());
 	}
 
@@ -185,7 +207,7 @@ public class PratoController {
 	 * @param result
 	 */
 	private void validarDadosExistentes(PratoDTO pratoDTO, BindingResult result) {
-		this.pratoService.buscarPorDescricao(pratoDTO.getDescricao()).ifPresent(func -> result.addError(new ObjectError("prato", "Descrição já existente.")));
+		this.pratoService.findByDescricao(pratoDTO.getDescricao()).ifPresent(func -> result.addError(new ObjectError("prato", "Descrição já existente.")));
 	}
 
 	/**
