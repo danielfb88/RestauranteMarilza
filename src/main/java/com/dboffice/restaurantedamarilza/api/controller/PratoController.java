@@ -9,9 +9,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -129,6 +131,29 @@ public class PratoController {
 		response.setData(this.converterParaDTO(pratoEntity));
 
 		return ResponseEntity.ok(response);
+	}
+
+	/**
+	 * Remove por id.
+	 * 
+	 * @param id
+	 * @return
+	 */
+	@DeleteMapping(value = "/{id}")
+	@PreAuthorize("hasAnyRole('ADMIN')")
+	public ResponseEntity<Response<String>> remover(@PathVariable("id") Long id) {
+		log.info("Removendo um prato: {}", id);
+		Response<String> response = new Response<String>();
+		Optional<PratoEntity> pratoEntity = this.pratoService.buscarPorId(id);
+
+		if (!pratoEntity.isPresent()) {
+			log.info("Erro ao remover devido ao prato ID: {} ser inválido.", id);
+			response.getErrors().add("Erro ao remover prato. Registro não encontrado para o id " + id);
+			return ResponseEntity.badRequest().body(response);
+		}
+
+		this.pratoService.remover(id);
+		return ResponseEntity.ok(new Response<String>());
 	}
 
 	/**

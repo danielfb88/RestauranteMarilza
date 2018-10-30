@@ -38,5 +38,10 @@ public class PratoServiceImpl implements PratoService {
 
 		return this.pratoRepository.save(pratoEntity);
 	}
+	
+	public void remover(Long id) {
+		log.info("Removendo o prato ID {}", id);
+		this.pratoRepository.delete(id);
+	}
 
 }

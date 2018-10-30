@@ -28,4 +28,11 @@ public interface PratoService {
 	 * @return
 	 */
 	PratoEntity salvar(PratoEntity pratoEntity);
+
+	/**
+	 * Remove um prato da base de dados.
+	 * 
+	 * @param id
+	 */
+	void remover(Long id);
 }
