@@ -1,0 +1,1 @@
+INSERT INTO tb_usuario (nome, email, senha, perfil) VALUES ('Daniel', 'daniel@dboffice.com', '$2a$10$MrMVCT13aTCZ0eh/.AZvM.seB2nYhMwLSfR7b7c5OGIq.JbM/7EN6', 'ROLE_ADMIN');
