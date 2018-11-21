@@ -24,7 +24,7 @@ public class PratoDTO {
 	}
 
 	@NotEmpty(message = "Descrição não pode ser vazio.")
-	@Length(min = 3, max = 30, message = "Descrião deve conter entre 3 e 30 caracteres.")
+	@Length(min = 3, max = 100, message = "Descrião deve conter entre 3 e 100 caracteres.")
 	public String getDescricao() {
 		return descricao;
 	}
